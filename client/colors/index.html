@@ -88,7 +88,7 @@ function getAverageRGB(ctx, w, h) {
 var started = false;
 
 var timer; 
-var secs = 60;
+var secs = 30;
 
 function gotStream(s) {
   var url = webkitURL.createObjectURL(s);
@@ -195,7 +195,7 @@ window.onload = function() {
 
 function finish () {
 
-  document.getElementById('cuenta').src = 'images/result.jpg';
+  document.getElementById('cuenta').src = 'images/result.png';
   document.getElementById('cuenta').style.display = 'block';
 
   document.getElementById('resultText').style.display = 'block';
