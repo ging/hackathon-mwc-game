@@ -87,6 +87,9 @@ function getAverageRGB(ctx, w, h) {
 
 var started = false;
 
+var timer; 
+var secs = 60;
+
 function gotStream(s) {
   var url = webkitURL.createObjectURL(s);
   document.getElementById("localView").src = url;
@@ -95,6 +98,7 @@ function gotStream(s) {
 
   var m = 'SCORE\n----------\nMe: 0\nOpponent: 0';
   document.getElementById('marcador').value = m;
+
 
   createPeerConnection();
   console.log("Adding local stream.");
@@ -119,6 +123,9 @@ function gotStream(s) {
   });
 }
 
+var score;
+var myScore;
+
 window.onload = function() {
 
 
@@ -126,20 +133,55 @@ window.onload = function() {
 
   socket.on('showRes', function (data) {
 
-    var score = data.score;
-    var me = score[myID];
+    score = data.score;
+    myScore = score[myID];
 
     delete score[myID];
 
     var keys = Object.keys(score);
 
-    console.log('YO: ', me, 'EL: ', score[keys[0]]);
+    console.log('YO: ', myScore, 'EL: ', score[keys[0]]);
 
-    var m = 'SCORE\n----------\nMe: ' + me + '\nOpponent: ' + score[keys[0]];
+    var m = 'SCORE\n----------\nMe: ' + myScore + '\nOpponent: ' + score[keys[0]];
 
     document.getElementById('marcador').value = m;
 
-    showRes(data);
+    if (data.first) {
+
+      document.getElementById('resultText').style.display = 'none';
+
+      document.getElementById('cuenta').src = 'images/tres.jpg';
+      setTimeout(function () {
+        document.getElementById('cuenta').src = 'images/dos.jpg';
+        setTimeout(function () {
+          document.getElementById('cuenta').src = 'images/uno.jpg';
+          setTimeout(function () {
+
+            timer = setInterval(function () {
+              var t = secs + 's';
+              document.getElementById('gametime').value = t;
+              secs --;
+
+              if (secs === -1) {
+                clearInterval(timer);
+                finish();
+              }
+            }, 1000);
+
+            document.getElementById('cuenta').style.display = 'none';
+            
+            showRes(data);
+
+          }, 1000);
+
+        }, 1000);
+
+      }, 1000);
+    } else {
+      showRes(data);
+    }
+
+    
   });
 
   socket.on('sdp', function (msg) {
@@ -148,6 +190,31 @@ window.onload = function() {
   });
 
   getUserMedia();
+
+}
+
+function finish () {
+
+  document.getElementById('cuenta').src = 'images/result.jpg';
+  document.getElementById('cuenta').style.display = 'block';
+
+  document.getElementById('resultText').style.display = 'block';
+
+  var keys = Object.keys(score);
+
+  var r;
+
+  if (myScore === score[keys[0]]) {
+    r = 'TIE!, Play again!';
+  } else if (myScore > score[keys[0]]) {
+    r = 'YOU WIN!';
+  } else {
+    r = 'YOU LOSE...';
+  }
+
+  var tex = r + '\nYou: ' + myScore + '\nYour opponent: ' + score[keys[0]];
+
+  document.getElementById('resultText').value = tex;
 
 }
 
@@ -183,6 +250,8 @@ var residuos = {
 var inter;
 
 function showRes (point) {
+
+  
 
   //borro el anterior
   clearInterval(inter);
@@ -261,7 +330,6 @@ function showRes (point) {
       };
 
     }
-
     
 
   },100);
@@ -280,10 +348,14 @@ function showRes (point) {
 
 <body>
 
+  <img id="cuenta" src="">
+
   <video id="localView" autoplay="autoplay"></video>
   <video id="remoteView" autoplay="autoplay"></video>
   <img id="arbol" src="images/arbol.jpg">
   <textarea readonly id="marcador" cols="20" rows="4"></textarea>
+  <textarea readonly id="gametime" cols="5" rows="1"></textarea>
+  <textarea readonly id="resultText" cols="10" rows="3"></textarea>
 
 
   </div>

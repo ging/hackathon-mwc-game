@@ -32,7 +32,7 @@ io.sockets.on('connection', function (socket) {
         	callback('success', socket.id, Object.keys(players).length);
 
         	if (Object.keys(players).length === 2) {
-        		sendRes();
+        		sendRes(true);
 
         	};
 
@@ -54,7 +54,7 @@ io.sockets.on('connection', function (socket) {
 
 	    	seqNum ++;
 
-	    	sendRes();
+	    	sendRes(false);
 	    }
 
     });
@@ -83,7 +83,7 @@ io.sockets.on('connection', function (socket) {
 
 });
 
-function sendRes () {
+function sendRes (first) {
 
 	var xo = randomFromInterval(0, 640 - 150);
 	var yo = randomFromInterval(0, 480 - 150);
@@ -95,8 +95,8 @@ function sendRes () {
 	//depende del numero de imagenes
 	var res = randomFromInterval (1,4);
 
-	io.sockets.socket(keys[0]).emit('showRes', {x: xo, y: yo, res: res, score: players, seqNum: seqNum});
-    io.sockets.socket(keys[1]).emit('showRes', {x: xo, y: yo, res: res, score: players, seqNum: seqNum});
+	io.sockets.socket(keys[0]).emit('showRes', {x: xo, y: yo, res: res, score: players, seqNum: seqNum, first: first});
+    io.sockets.socket(keys[1]).emit('showRes', {x: xo, y: yo, res: res, score: players, seqNum: seqNum, first: first});
 
 }
 
