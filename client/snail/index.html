@@ -12,9 +12,9 @@ margin-top: -250px;}
 </style>
 <script>
 var ws;
-var xmin = -50;
-var xmax = 220;
-var ymin = 63;
+var xmin = -40;
+var xmax = 200;
+var ymin = 80;
 var ymax = 160;
 var score = 0;
 var isPainting = true;
@@ -25,6 +25,7 @@ var trash = new Array();
 var background = new Image();
 var caracol = new Image();
 var news = new Image();
+var can = new Image();
 // Support both the WebSocket and MozWebSocket objects
 if ((typeof(WebSocket) == 'undefined') &&
     (typeof(MozWebSocket) != 'undefined')) {
@@ -36,6 +37,7 @@ function init() {
   background.src = "background.png";
   caracol.src = "caracol.gif";
   news.src = "news.png";
+  can.src = "can.png";
   //Create and open the socket
   ws = new WebSocket("ws://localhost:6437/");
 
@@ -72,6 +74,12 @@ function init() {
     if (line.length===100){
       var a = isCollision(line[0].x,line[0].y);
       if (a!=-1){
+        if(trash[a].type){
+          score = score + 5;
+        }else{
+          score = score - 5;
+        }
+
         trash.splice(a,1);
       }
       line.reverse();
@@ -95,24 +103,35 @@ function init() {
    },20);
 
    var generateTrash = self.setInterval(function(){
-     if (trash.length>2)
+     if (trash.length>4)
       return;
       do {
-     var ex = Math.floor((Math.random()*canvasWidth));
-     var gy = Math.floor ((Math.random()*canvasHeight));
+     var ex = Math.floor((Math.random()*(canvasWidth-200)+50));
+     var gy = Math.floor ((Math.random()*(canvasHeight-200)+50));
       }while(isCollision(ex,gy)!=-1)
      var type = false;
      if (Math.random()>0.5)
      {
       type = true;
      }
+     var wtrash, htrash;
+
+     if (type){
+      wtrash = news.width;
+      htrash = news.height;
+     }else{
+      wtrash = can.width;
+      htrash = can.height
+     }
+     
      var theTrash = {
        x : ex,
        y : gy,
-       width : 70,
-       height : 65,
+       width : wtrash,
+       height : htrash,
        type : type
      };
+  
 
      trash.push(theTrash);
    },2000);
@@ -192,7 +211,11 @@ function init() {
  function paintTrash(){
   for (var i =0; i<trash.length;i++){
     //context.fillRect(trash[i].x,trash[i].y,trash[i].width,trash[i].height);
-    context.drawImage(news,trash[i].x,trash[i].y);
+    if(trash[i].type){
+      context.drawImage(news,trash[i].x,trash[i].y);
+    }else{
+      context.drawImage(can,trash[i].x, trash[i].y);
+    }
    }
  }
 
@@ -200,8 +223,9 @@ function init() {
     context.save();
     context.fillStyle = "rgba(0, 0, 200, 0.5)";
     context.fillRect(canvasWidth-300,50, 250, 70);
+    context.fillStyle = "rgba(255,255,0, 1)";
     context.font="20px Georgia";
-    context.fillText("Hello World!",canvasWidth-250,100);
+    context.fillText("Score " + score,canvasWidth-250,75);
     context.restore();
  }
 
