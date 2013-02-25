@@ -155,6 +155,8 @@ function init() {
   context.closePath();
 
 //  context.fillRect(line[0].x-25,line[0].y-25,50,50);
+  if (line[0]===undefined)
+    return;
   context.drawImage(caracol,line[0].x-caracol.width/2,line[0].y-caracol.height/2);
   context.beginPath();
   context.moveTo(line[0].x,line[0].y);
@@ -173,10 +175,6 @@ function init() {
       isPainting=true;
     }
   }
-
- function clearScreen(){
-  canvas.width = canvas.width;
- }
 
  function isCollision(x, y){
   for (var i = 0; i < trash.length; i++){
