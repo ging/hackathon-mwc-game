@@ -4,8 +4,10 @@
 <title>GAME</title>
 
 <link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/styleColors.css">
 <link rel="stylesheet" href="/font-awesome.css">
 <script src="/socket.io/socket.io.js"></script>
+<script src="wrtc.js"></script>
 
 <script type="text/javascript">
 
@@ -13,6 +15,12 @@ var socket;
 var localStream = null;
 var myID = 0;
 
+function setElementValuesFromURL() {
+  window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi,
+    function(m, key, value) {
+      document.getElementById(key).value = unescape(value);
+    });
+}
 
 // Local stream generation
 
@@ -77,16 +85,33 @@ function getAverageRGB(ctx, w, h) {
 
 }
 
+var started = false;
+
 function gotStream(s) {
   var url = webkitURL.createObjectURL(s);
   document.getElementById("localView").src = url;
   console.log("User has granted access to local media. url = " + url);
   localStream = s;
 
-  socket.emit('initConnection', function (response, id) {
+  var m = 'Me: 0\nOpponent: 0';
+  document.getElementById('marcador').value = m;
+
+  createPeerConnection();
+  console.log("Adding local stream.");
+  pc.addStream(localStream);
+
+  started = true; 
+
+  socket.emit('initConnection', function (response, id, number) {
     if (response == 'success') {
       console.log('connected');
       myID = id;
+
+      console.log('sssss', number);
+
+      if (number === 2) {
+        doCall();
+      };
 
     } else {
       console.log('full game');
@@ -110,8 +135,16 @@ window.onload = function() {
 
     console.log('YO: ', me, 'EL: ', score[keys[0]]);
 
+    var m = 'Me: ' + me + '\nOpponent: ' + score[keys[0]];
+
+    document.getElementById('marcador').value = m;
 
     showRes(data);
+  });
+
+  socket.on('sdp', function (msg) {
+
+    processSignalingMessage(msg); 
   });
 
   getUserMedia();
@@ -159,7 +192,7 @@ function showRes (point) {
   }
 
   var image = residuos[point.res].image;
-  var color = residuos[point.res].color;
+  var type = residuos[point.res].color;
 
   var ox = point.x;
   var oy = point.y;
@@ -172,9 +205,6 @@ function showRes (point) {
   canvas1.id = "draw";
   canvas1.width = 640;
   canvas1.height = 480;
-
-  //canvas1.setAttribute('style', 'position:absolute;z-index:1;');
-
 
   context1 = canvas1.getContext('2d');
   context1.globalAlpha = 0.8;
@@ -195,14 +225,44 @@ function showRes (point) {
 
     var color = analyzeRect(ox,oy);
 
-    //console.log(color);
+    //console.log(color, type);
 
-    if (color.r > 200 && color.g < 200 && color.b < 200) {
-      console.log('YEEEEEEEEEAH');
-      clearInterval(inter);
-      document.getElementById('draw').parentNode.removeChild(canvas1);
-      socket.emit('yeah', point.seqNum);
-    };
+    if (type === 'yellow') {
+
+      if (color.r > 185) {
+        console.log('YEEEEEEEEEAH', type);
+        clearInterval(inter);
+        document.getElementById('draw').parentNode.removeChild(canvas1);
+        socket.emit('yeah', point.seqNum);
+      };
+
+    } else if (type === 'gray') {
+      if (color.r < 150 && color.b > 160 && color.b < 200) {
+        console.log('YEEEEEEEEEAH', type);
+        clearInterval(inter);
+        document.getElementById('draw').parentNode.removeChild(canvas1);
+        socket.emit('yeah', point.seqNum);
+      };
+
+    } else if (type === 'blue') {
+      if (color.b > 190) {
+        console.log('YEEEEEEEEEAH', type);
+        clearInterval(inter);
+        document.getElementById('draw').parentNode.removeChild(canvas1);
+        socket.emit('yeah', point.seqNum);
+      };
+
+    } else if (type === 'green') {
+      if (color.r < 185 && color.g > 160 && color.b < 195) {
+        console.log('YEEEEEEEEEAH', type);
+        clearInterval(inter);
+        document.getElementById('draw').parentNode.removeChild(canvas1);
+        socket.emit('yeah', point.seqNum);
+      };
+
+    }
+
+    
 
   },100);
 
@@ -221,6 +281,12 @@ function showRes (point) {
 <body>
 
   <video id="localView" autoplay="autoplay"></video>
+  <video id="remoteView" autoplay="autoplay"></video>
+  <img id="arbol" src="images/arbol.jpg">
+  <textarea readonly id="marcador" cols="20" rows="4"></textarea>
+
+
+  </div>
 </body>
 
 </html>

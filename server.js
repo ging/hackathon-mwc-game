@@ -29,7 +29,7 @@ io.sockets.on('connection', function (socket) {
 
         	players[socket.id] = 0;
         	console.log('connected player ', Object.keys(players).length);
-        	callback('success', socket.id);
+        	callback('success', socket.id, Object.keys(players).length);
 
         	if (Object.keys(players).length === 2) {
         		sendRes();
@@ -56,6 +56,18 @@ io.sockets.on('connection', function (socket) {
 
 	    	sendRes();
 	    }
+
+    });
+
+    socket.on('sdp', function (msg) {
+
+        var keys = Object.keys(players);
+
+        for (var i = 0; i < 2; i++) {
+            if (players[keys[i]] !== socket.id) {
+                io.sockets.socket(keys[i]).emit('sdp', msg);
+            }
+        }
 
     });
 

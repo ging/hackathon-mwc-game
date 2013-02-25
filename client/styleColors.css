@@ -1,0 +1,54 @@
+#draw {
+  width: 640px;
+  height: 480px;
+  position:absolute;
+  z-index:1;
+  left: 50%;
+  margin-left: -395px;
+  top: 150px;
+}
+
+#localView {
+  width: 640px;
+  height: 480px;
+  position:absolute;
+  z-index:1;
+  left: 50%;
+  margin-left: -395px;
+  top: 150px;
+  -webkit-transform: scale(-1, 1);
+}
+
+#remoteView {
+  width: 240px;
+  height: 180px;
+  position:absolute;
+  left: 50%;
+  margin-left: 280px;
+  top: 450px;
+  z-index:1;
+}
+#arbol {
+  width: 390px;
+  height: ;
+  position:absolute;
+  left: 50%;
+  margin-left: 255px;
+  top: 140px;
+  z-index:0;
+}
+#marcador {
+  width: 200px;
+  height: 80;
+  position:absolute;
+  left: 50%;
+  margin-left: 360px;
+  top: 330px;
+  z-index:1;
+  background-color: transparent;
+  font-size: 16pt;
+  font-family: Arial;
+  color: white;
+  resize: none;
+  border: none;
+}
