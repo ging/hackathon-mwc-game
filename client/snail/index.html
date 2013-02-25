@@ -3,8 +3,8 @@
 <title>Leap JavaScript API</title>
 
 <link rel="stylesheet" href="/style.css">
-        <link rel="stylesheet" href="/font-awesome.css">
-
+<link rel="stylesheet" href="/font-awesome.css">
+<link rel="stylesheet" href="/styleColors.css">
 <style type="text/css"><!--
       #container { position: absolute; width:1024px; height:500px; margin-left:-512px; left:50%; top: 50%;
 margin-top: -250px;}
@@ -32,8 +32,26 @@ if ((typeof(WebSocket) == 'undefined') &&
   WebSocket = MozWebSocket;
 }
 
+function start(){
+
+  document.getElementById('cuenta').src = '/colors/images/tres.jpg';
+    setTimeout(function () {
+        document.getElementById('cuenta').src = '/colors/images/dos.jpg';
+        setTimeout(function () {
+          document.getElementById('cuenta').src = '/colors/images/uno.jpg';
+          setTimeout(function () {
+            document.getElementById('cuenta').style.display = 'none';
+            init();
+          }, 1000);
+
+        }, 1000);
+
+      }, 1000);
+}
+
 // Create the socket with event handlers
 function init() {
+
   background.src = "background.png";
   caracol.src = "caracol.gif";
   news.src = "news.png";
@@ -237,13 +255,14 @@ function init() {
 
 </script>
 </head>
-<body onload="init();">
+<body onload="start();">
   <div id="cabecera">
             <div>
                 <img id="title" src="/img/title.png" alt="Lynckia"></img>
             </div>
   </div>
-<div id="buttonsDiv">
+
+ <img id="cuenta" src="">
 <div id="main" style="visibility:hidden">
     <div id="container">
       <canvas id="imageView" width="1024" height="500">
