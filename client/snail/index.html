@@ -1,14 +1,9 @@
-<!DOCTYPE html>
-<!------------------------------------------------------------------------------
-| Copyright (C) 2012-2013 Leap Motion, Inc. All rights reserved.               |
-| Leap Motion proprietary and confidential. Not for distribution.              |
-| Use subject to the terms of the Leap Motion SDK Agreement available at       |
-| https://developer.leapmotion.com/sdk_agreement, or another agreement         |
-| between Leap Motion and you, your company or other organization.             |
-------------------------------------------------------------------------------->
 <html>
 <head>
 <title>Leap JavaScript API</title>
+
+<link rel="stylesheet" href="/style.css">
+        <link rel="stylesheet" href="font-awesome.css">
 
 <style type="text/css"><!--
       #container { position: absolute; width:1024px; height:500px; margin-left:-512px; left:50%; }
@@ -42,25 +37,25 @@ function init() {
   news.src = "news.png";
   //Create and open the socket
   ws = new WebSocket("ws://localhost:6437/");
-  
+
   // On successful connection
   ws.onopen = function(event) {
     document.getElementById("main").style.visibility = "visible";
     document.getElementById("connection").innerHTML = "WebSocket connection open!";
   };
-  
+
   // On message received
   ws.onmessage = function(event) {
     var obj = JSON.parse(event.data);
     currentX = obj.hands[0].palmPosition[0];
     currentY = obj.hands[0].palmPosition[1];
   };
-  
+
 
   var int=self.setInterval(function(){
     if (currentX===undefined || currentY===undefined)
       return;
-    
+
     var theX = currentX*(canvasWidth/xmax)+(canvasWidth/2);
     var ac= (-canvasHeight)/(ymax-ymin);
     var theY = currentY*ac - ymax*ac;
@@ -82,7 +77,7 @@ function init() {
     }
 
 
-    line.push(point); 
+    line.push(point);
    },20);
 
    var drawLoop = self.setInterval(function(){
@@ -115,7 +110,7 @@ function init() {
        height : 65,
        type : type
      };
-     
+
      trash.push(theTrash);
    },2000);
 
@@ -125,7 +120,7 @@ function init() {
     document.getElementById("main").style.visibility = "hidden";
     document.getElementById("connection").innerHTML = "WebSocket connection closed";
   }
-  
+
   //On socket error
   ws.onerror = function(event) {
     alert("Received error");
@@ -196,7 +191,7 @@ function init() {
  function paintTrash(){
   for (var i =0; i<trash.length;i++){
     //context.fillRect(trash[i].x,trash[i].y,trash[i].width,trash[i].height);
-    context.drawImage(news,trash[i].x,trash[i].y); 
+    context.drawImage(news,trash[i].x,trash[i].y);
    }
  }
 
@@ -212,29 +207,28 @@ function init() {
 </script>
 </head>
 <body onload="init();">
-<h1>Leap JavaScript/WebSocket Sample</h1>
-<div id="connection">WebSocket not connected</div>
-<button onclick="togglePaint()">Toggle Painting</button>
-<button onclick="clearScreen()">Clear</button>
+  <div id="cabecera">
+            <div>
+                <img id="title" src="/img/title.png" alt="Lynckia"></img>
+            </div>
+  </div>
 <div id="buttonsDiv">
 <div id="main" style="visibility:hidden">
-    <p>Move the mouse over the rectangle below.</p>
     <div id="container">
       <canvas id="imageView" width="1024" height="500">
-        <p>Unfortunately, your browser is currently unsupported by our web 
-        application.  We are sorry for the inconvenience. Please use one of the 
-        supported browsers listed below, or draw the image you want using an 
+        <p>Unfortunately, your browser is currently unsupported by our web
+        application.  We are sorry for the inconvenience. Please use one of the
+        supported browsers listed below, or draw the image you want using an
         offline tool.</p>
-        <p>Supported browsers: <a href="http://www.opera.com">Opera</a>, <a 
-          href="http://www.mozilla.com">Firefox</a>, <a 
-          href="http://www.apple.com/safari">Safari</a>, and <a 
+        <p>Supported browsers: <a href="http://www.opera.com">Opera</a>, <a
+          href="http://www.mozilla.com">Firefox</a>, <a
+          href="http://www.apple.com/safari">Safari</a>, and <a
           href="http://www.konqueror.org">Konqueror</a>.</p>
       </canvas>
     </div>
 </div>
-  <p>JSON Frame data:</p>
-  <div id="output"></div>
+<div id="output"></div>
 
-  
+
   </body>
 </html>

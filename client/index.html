@@ -39,22 +39,18 @@
                     // return the original result
                     return result;
                 };
-                $("a[data-position=0]").click(function() {
-                    moodular.moveTo(0);
-                    return false;
-                });
-                $("a[data-position=1]").click(function() {
-                    moodular.moveTo(1);
-                    return false;
-                });
-                $("a[data-position=2]").click(function() {
-                    moodular.moveTo(2);
-                    return false;
-                });
-                $("a[data-position=3]").click(function() {
-                    moodular.moveTo(3);
-                    return false;
-                });
+                for (var i = 0; i < 4; i++) {
+                    $("a[data-position="+i+"]").click(function(event) {
+                        var target = $(event.target);
+                        if (target.prop("tagName") !== "A") {
+                            target = target.parent();
+                        }
+                        if (!target.hasClass("active")) {
+                            moodular.moveTo(target.attr("data-position"));
+                            return false;
+                        }
+                    });
+                }
             });
         </script>
     </head>
@@ -80,19 +76,19 @@
         </div>
         <div id="carousel">
             <ul id="demo">
-                <li>
-                    <img class="car-image" src="img/photo01.jpg" />
-
+                <li class="info">
+                    <img id="match-image" src="img/match-game.png" />
+                    <a id="play_button" href="colors">Click to Play!</a>
                 </li>
-                <li>
+                <li class="info">
                     <img class="car-image" src="img/photo02.jpg" />
 
                 </li>
-                <li>
+                <li class="info">
                     <img class="car-image" src="img/photo03.jpg" />
 
                 </li>
-                <li>
+                <li class="info">
                     hola
 
                 </li>
