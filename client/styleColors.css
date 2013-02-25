@@ -39,11 +39,11 @@
 }
 #marcador {
   width: 200px;
-  height: 80;
+  height: 100;
   position:absolute;
   left: 50%;
-  margin-left: 360px;
-  top: 330px;
+  margin-left: 370px;
+  top: 305px;
   z-index:1;
   background-color: transparent;
   font-size: 16pt;

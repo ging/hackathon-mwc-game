@@ -93,7 +93,7 @@ function gotStream(s) {
   console.log("User has granted access to local media. url = " + url);
   localStream = s;
 
-  var m = 'Me: 0\nOpponent: 0';
+  var m = 'SCORE\n----------\nMe: 0\nOpponent: 0';
   document.getElementById('marcador').value = m;
 
   createPeerConnection();
@@ -135,7 +135,7 @@ window.onload = function() {
 
     console.log('YO: ', me, 'EL: ', score[keys[0]]);
 
-    var m = 'Me: ' + me + '\nOpponent: ' + score[keys[0]];
+    var m = 'SCORE\n----------\nMe: ' + me + '\nOpponent: ' + score[keys[0]];
 
     document.getElementById('marcador').value = m;
 
