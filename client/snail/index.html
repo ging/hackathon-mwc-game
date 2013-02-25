@@ -20,6 +20,7 @@ var xmin = -50;
 var xmax = 220;
 var ymin = 63;
 var ymax = 160;
+var score = 0;
 var isPainting = true;
 var currentX, currentY;
 var canvasWidth, canvasHeight;
@@ -27,6 +28,7 @@ var line = new Array();
 var trash = new Array();
 var background = new Image();
 var caracol = new Image();
+var news = new Image();
 // Support both the WebSocket and MozWebSocket objects
 if ((typeof(WebSocket) == 'undefined') &&
     (typeof(MozWebSocket) != 'undefined')) {
@@ -37,6 +39,7 @@ if ((typeof(WebSocket) == 'undefined') &&
 function init() {
   background.src = "background.png";
   caracol.src = "caracol.gif";
+  news.src = "news.png";
   //Create and open the socket
   ws = new WebSocket("ws://localhost:6437/");
   
@@ -87,6 +90,7 @@ function init() {
 
         canvas.width=canvas.width;
         context.drawImage(background, 0, 0);
+        paintScore();
         paintLine();
         paintTrash();
     }
@@ -107,8 +111,8 @@ function init() {
      var theTrash = {
        x : ex,
        y : gy,
-       width : 50,
-       height : 50,
+       width : 70,
+       height : 65,
        type : type
      };
      
@@ -191,8 +195,18 @@ function init() {
 
  function paintTrash(){
   for (var i =0; i<trash.length;i++){
-    context.fillRect(trash[i].x,trash[i].y,trash[i].width,trash[i].height);
+    //context.fillRect(trash[i].x,trash[i].y,trash[i].width,trash[i].height);
+    context.drawImage(news,trash[i].x,trash[i].y); 
    }
+ }
+
+ function paintScore(){
+    context.save();
+    context.fillStyle = "rgba(0, 0, 200, 0.5)";
+    context.fillRect(canvasWidth-300,50, 250, 70);
+    context.font="20px Georgia";
+    context.fillText("Hello World!",canvasWidth-250,100);
+    context.restore();
  }
 
 </script>
