@@ -3,10 +3,11 @@
 <title>Leap JavaScript API</title>
 
 <link rel="stylesheet" href="/style.css">
-        <link rel="stylesheet" href="font-awesome.css">
+        <link rel="stylesheet" href="/font-awesome.css">
 
 <style type="text/css"><!--
-      #container { position: absolute; width:1024px; height:500px; margin-left:-512px; left:50%; }
+      #container { position: absolute; width:1024px; height:500px; margin-left:-512px; left:50%; top: 50%;
+margin-top: -250px;}
       #imageView { border: 1px solid #000; }
 </style>
 <script>
@@ -61,7 +62,7 @@ function init() {
     var theX = currentX*(canvasWidth/xmax)+(canvasWidth/2);
     var ac= (-canvasHeight)/(ymax-ymin);
     var theY = currentY*ac - ymax*ac;
-    document.getElementById("output").innerHTML = '<pre> x:' + currentX + ' y: ' + currentY + ' theX: ' +theX + ' theY: ' + theY + '</pre>';
+    //document.getElementById("output").innerHTML = '<pre> x:' + currentX + ' y: ' + currentY + ' theX: ' +theX + ' theY: ' + theY + '</pre>';
     //paintTruck(theX,theY);
     var point={
     x : theX,
@@ -227,7 +228,7 @@ function init() {
       </canvas>
     </div>
 </div>
-<div id="output"></div>
+<!--<div id="output"></div>-->
 
 
   </body>
