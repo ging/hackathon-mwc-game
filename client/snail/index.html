@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<!------------------------------------------------------------------------------
+| Copyright (C) 2012-2013 Leap Motion, Inc. All rights reserved.               |
+| Leap Motion proprietary and confidential. Not for distribution.              |
+| Use subject to the terms of the Leap Motion SDK Agreement available at       |
+| https://developer.leapmotion.com/sdk_agreement, or another agreement         |
+| between Leap Motion and you, your company or other organization.             |
+------------------------------------------------------------------------------->
+<html>
+<head>
+<title>Leap JavaScript API</title>
+
+<style type="text/css"><!--
+      #container { position: absolute; width:1024px; height:500px; margin-left:-512px; left:50%; }
+      #imageView { border: 1px solid #000; }
+</style>
+<script>
+var ws;
+var xmin = -50;
+var xmax = 220;
+var ymin = 63;
+var ymax = 160;
+var isPainting = true;
+var currentX, currentY;
+var canvasWidth, canvasHeight;
+var line = new Array();
+var trash = new Array();
+var background = new Image();
+var caracol = new Image();
+// Support both the WebSocket and MozWebSocket objects
+if ((typeof(WebSocket) == 'undefined') &&
+    (typeof(MozWebSocket) != 'undefined')) {
+  WebSocket = MozWebSocket;
+}
+
+// Create the socket with event handlers
+function init() {
+  background.src = "background.png";
+  caracol.src = "caracol.gif";
+  //Create and open the socket
+  ws = new WebSocket("ws://localhost:6437/");
+  
+  // On successful connection
+  ws.onopen = function(event) {
+    document.getElementById("main").style.visibility = "visible";
+    document.getElementById("connection").innerHTML = "WebSocket connection open!";
+  };
+  
+  // On message received
+  ws.onmessage = function(event) {
+    var obj = JSON.parse(event.data);
+    currentX = obj.hands[0].palmPosition[0];
+    currentY = obj.hands[0].palmPosition[1];
+  };
+  
+
+  var int=self.setInterval(function(){
+    if (currentX===undefined || currentY===undefined)
+      return;
+    
+    var theX = currentX*(canvasWidth/xmax)+(canvasWidth/2);
+    var ac= (-canvasHeight)/(ymax-ymin);
+    var theY = currentY*ac - ymax*ac;
+    document.getElementById("output").innerHTML = '<pre> x:' + currentX + ' y: ' + currentY + ' theX: ' +theX + ' theY: ' + theY + '</pre>';
+    //paintTruck(theX,theY);
+    var point={
+    x : theX,
+    y : theY
+    };
+
+    if (line.length===100){
+      var a = isCollision(line[0].x,line[0].y);
+      if (a!=-1){
+        trash.splice(a,1);
+      }
+      line.reverse();
+      line.pop();
+      line.reverse();
+    }
+
+
+    line.push(point); 
+   },20);
+
+   var drawLoop = self.setInterval(function(){
+    if (isPainting){
+
+        canvas.width=canvas.width;
+        context.drawImage(background, 0, 0);
+        paintLine();
+        paintTrash();
+    }
+   },20);
+
+   var generateTrash = self.setInterval(function(){
+     if (trash.length>2)
+      return;
+      do {
+     var ex = Math.floor((Math.random()*canvasWidth));
+     var gy = Math.floor ((Math.random()*canvasHeight));
+      }while(isCollision(ex,gy)!=-1)
+     var type = false;
+     if (Math.random()>0.5)
+     {
+      type = true;
+     }
+     var theTrash = {
+       x : ex,
+       y : gy,
+       width : 50,
+       height : 50,
+       type : type
+     };
+     
+     trash.push(theTrash);
+   },2000);
+
+  // On socket close
+  ws.onclose = function(event) {
+    ws = null;
+    document.getElementById("main").style.visibility = "hidden";
+    document.getElementById("connection").innerHTML = "WebSocket connection closed";
+  }
+  
+  //On socket error
+  ws.onerror = function(event) {
+    alert("Received error");
+  };
+
+    canvas = document.getElementById('imageView');
+    if (!canvas) {
+      alert('Error: I cannot find the canvas element!');
+      return;
+    }
+
+    if (!canvas.getContext) {
+      alert('Error: no canvas.getContext!');
+      return;
+    }
+
+    canvasWidth = canvas.width;
+    canvasHeight = canvas.height;
+
+    // Get the 2D canvas context.
+    context = canvas.getContext('2d');
+    if (!context) {
+      alert('Error: failed to getContext!');
+      return;
+    }
+   }
+  // The mousemove event handler.
+  var started = false;
+ function paintLine () {
+  context.closePath();
+
+//  context.fillRect(line[0].x-25,line[0].y-25,50,50);
+  context.drawImage(caracol,line[0].x-caracol.width/2,line[0].y-caracol.height/2);
+  context.beginPath();
+  context.moveTo(line[0].x,line[0].y);
+  for (var i = 1; i < line.length; i++) {
+   context.lineTo(line[i].x,line[i].y)
+  }
+  context.stroke();
+ }
+
+ function togglePaint(){
+  if (started){
+    started = false;
+    context.closePath();
+    isPainting = true;
+    }else{
+      isPainting=true;
+    }
+  }
+
+ function clearScreen(){
+  canvas.width = canvas.width;
+ }
+
+ function isCollision(x, y){
+  for (var i = 0; i < trash.length; i++){
+    if (x>trash[i].x && x<trash[i].x+trash[i].width){
+      if (y>trash[i].y && y<trash[i].y+trash[i].height){
+        return i;
+      }
+    }
+  }
+  return -1;
+ }
+
+
+ function paintTrash(){
+  for (var i =0; i<trash.length;i++){
+    context.fillRect(trash[i].x,trash[i].y,trash[i].width,trash[i].height);
+   }
+ }
+
+</script>
+</head>
+<body onload="init();">
+<h1>Leap JavaScript/WebSocket Sample</h1>
+<div id="connection">WebSocket not connected</div>
+<button onclick="togglePaint()">Toggle Painting</button>
+<button onclick="clearScreen()">Clear</button>
+<div id="buttonsDiv">
+<div id="main" style="visibility:hidden">
+    <p>Move the mouse over the rectangle below.</p>
+    <div id="container">
+      <canvas id="imageView" width="1024" height="500">
+        <p>Unfortunately, your browser is currently unsupported by our web 
+        application.  We are sorry for the inconvenience. Please use one of the 
+        supported browsers listed below, or draw the image you want using an 
+        offline tool.</p>
+        <p>Supported browsers: <a href="http://www.opera.com">Opera</a>, <a 
+          href="http://www.mozilla.com">Firefox</a>, <a 
+          href="http://www.apple.com/safari">Safari</a>, and <a 
+          href="http://www.konqueror.org">Konqueror</a>.</p>
+      </canvas>
+    </div>
+</div>
+  <p>JSON Frame data:</p>
+  <div id="output"></div>
+
+  
+  </body>
+</html>
