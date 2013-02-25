@@ -103,14 +103,17 @@ function init() {
    },20);
 
    var generateTrash = self.setInterval(function(){
-     if (trash.length>4)
-      return;
-      do {
+      if (trash.length>4){
+         trash.splice(0,1);
+         return;
+      }
+
+     do {
      var ex = Math.floor((Math.random()*(canvasWidth-200)+50));
      var gy = Math.floor ((Math.random()*(canvasHeight-200)+50));
       }while(isCollision(ex,gy)!=-1)
      var type = false;
-     if (Math.random()>0.5)
+     if (Math.random()>0.4)
      {
       type = true;
      }
@@ -178,11 +181,14 @@ function init() {
   if (line[0]===undefined)
     return;
   context.drawImage(caracol,line[0].x-caracol.width/2,line[0].y-caracol.height/2);
+  
   context.beginPath();
   context.moveTo(line[0].x,line[0].y);
   for (var i = 1; i < line.length; i++) {
    context.lineTo(line[i].x,line[i].y)
   }
+  context.lineWidth = 2;
+  context.strokeStyle = 'red';
   context.stroke();
  }
 
