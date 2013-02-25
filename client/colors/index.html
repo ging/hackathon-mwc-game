@@ -1,0 +1,226 @@
+<html>
+
+<head>
+<title>GAME</title>
+
+<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/font-awesome.css">
+<script src="/socket.io/socket.io.js"></script>
+
+<script type="text/javascript">
+
+var socket;
+var localStream = null;
+var myID = 0;
+
+
+// Local stream generation
+
+function gotStreamFailed(error) {
+  alert("Failed to get access to local media. Error code was " + error.code +
+    ".");
+  console.log("Failed to get access to local media. Error code was " +
+    error.code);
+}
+
+function getUserMedia() {
+  try {
+    navigator.webkitGetUserMedia({video: true, audio: true}, gotStream, gotStreamFailed);
+    console.log("Requested access to local media");
+  } catch (e) {
+    console.log(e, "getUserMedia error");
+  }
+}
+
+
+function getAverageRGB(ctx, w, h) {
+
+    var blockSize = 5, // only visit every 5 pixels
+        defaultRGB = {r:0,g:0,b:0}, // for non-supporting envs
+        canvas = document.createElement('canvas'),
+        context = ctx,
+        data, width, height,
+        i = -4,
+        length,
+        rgb = {r:0,g:0,b:0},
+        count = 0;
+
+    if (!context) {
+        return defaultRGB;
+    }
+
+    height = h;
+    width = w;
+
+    try {
+        data = context.getImageData(0, 0, width, height);
+    } catch(e) {
+        /* security error, img on diff domain */
+        return defaultRGB;
+    }
+
+    length = data.data.length;
+
+    while ( (i += blockSize * 4) < length ) {
+        ++count;
+        rgb.r += data.data[i];
+        rgb.g += data.data[i+1];
+        rgb.b += data.data[i+2];
+    }
+
+    // ~~ used to floor values
+    rgb.r = ~~(rgb.r/count);
+    rgb.g = ~~(rgb.g/count);
+    rgb.b = ~~(rgb.b/count);
+
+    return rgb;
+
+}
+
+function gotStream(s) {
+  var url = webkitURL.createObjectURL(s);
+  document.getElementById("localView").src = url;
+  console.log("User has granted access to local media. url = " + url);
+  localStream = s;
+
+  socket.emit('initConnection', function (response, id) {
+    if (response == 'success') {
+      console.log('connected');
+      myID = id;
+
+    } else {
+      console.log('full game');
+    }
+  });
+}
+
+window.onload = function() {
+
+
+  socket = io.connect('/');
+
+  socket.on('showRes', function (data) {
+
+    var score = data.score;
+    var me = score[myID];
+
+    delete score[myID];
+
+    var keys = Object.keys(score);
+
+    console.log('YO: ', me, 'EL: ', score[keys[0]]);
+
+
+    showRes(data);
+  });
+
+  getUserMedia();
+
+}
+
+function analyzeRect (x,y) {
+
+  var div = document.getElementById('localView');
+
+  var canvas = document.createElement('canvas');
+  var context;
+
+  canvas.id = "testing";
+  canvas.width = 150;
+  canvas.height = 150;
+
+  context = canvas.getContext('2d');
+
+  context.drawImage(div, 640 - x - 150, y, 150, 150, 0, 0, 150, 150);
+
+  //document.body.appendChild(canvas);
+  canvas.setAttribute('style', 'position:absolute;z-index:1;');
+
+  return getAverageRGB(context, 150, 150);
+
+}
+
+var residuos = {
+  1: {image: 'images/lata.jpg', color: 'yellow'},
+  2: {image: 'images/platano.jpeg', color: 'gray'},
+  3: {image: 'images/botella.jpg', color: 'green'},
+  4: {image: 'images/periodico.jpg', color: 'blue'}
+};
+
+var inter;
+
+function showRes (point) {
+
+  //borro el anterior
+  clearInterval(inter);
+  if (document.getElementById('draw') !== null) {
+    var c = document.getElementById('draw');
+    c.parentNode.removeChild(c);
+  }
+
+  var image = residuos[point.res].image;
+  var color = residuos[point.res].color;
+
+  var ox = point.x;
+  var oy = point.y;
+
+  console.log(ox,oy);
+
+  var canvas1 = document.createElement('canvas');
+  var context1;
+
+  canvas1.id = "draw";
+  canvas1.width = 640;
+  canvas1.height = 480;
+
+  //canvas1.setAttribute('style', 'position:absolute;z-index:1;');
+
+
+  context1 = canvas1.getContext('2d');
+  context1.globalAlpha = 0.8;
+
+  context1.fillStyle = "red";
+  context1.fillRect(ox,oy,150,150);
+  context1.clearRect(ox+2,oy+2,146,146);
+
+  var base_image = new Image();
+  base_image.src = image;
+  base_image.onload = function(){
+    context1.drawImage(base_image, ox, oy, 150, 150);
+  }
+
+  document.body.appendChild(canvas1);
+
+  inter = setInterval(function() {
+
+    var color = analyzeRect(ox,oy);
+
+    //console.log(color);
+
+    if (color.r > 200 && color.g < 200 && color.b < 200) {
+      console.log('YEEEEEEEEEAH');
+      clearInterval(inter);
+      document.getElementById('draw').parentNode.removeChild(canvas1);
+      socket.emit('yeah', point.seqNum);
+    };
+
+  },100);
+
+}
+
+
+</script>
+</head>
+
+<div id="cabecera">
+            <div>
+                <a href="/"><img id="title" src="/img/title.png" alt="Lynckia"></img></a>
+            </div>
+        </div>
+
+<body>
+
+  <video id="localView" autoplay="autoplay"></video>
+</body>
+
+</html>

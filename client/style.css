@@ -1,0 +1,215 @@
+/* general */
+
+* {
+}
+
+body {
+  font-family: FontAwesome;
+  margin: 0;
+  padding: 0;
+  background-image: url("img/background.jpeg");
+  background-repeat: repeat-x;
+  background-position: bottom;
+}
+
+div#cabecera {
+  position: absolute;
+  left: 225px;
+  top: 5px;
+}
+
+div#cabecera #title {
+  left: 100px;
+width: 300px;
+}
+
+div#cabecera ul#botonera {
+  width: 692px;
+  top: 50px;
+  left: 275px;
+  position: absolute;
+}
+
+ul {
+  list-style: none;
+}
+
+a {
+  text-decoration: none;
+  color: #0ac80a;
+  outline: none;
+}
+
+div#cabecera ul#botonera li {
+  position: relative;
+  float: left;
+  height: 40px;
+  margin-right: 3px;
+  padding-left: 5px;
+}
+
+div#cabecera ul#botonera li a,
+div#cabecera ul#botonera li strong {
+  display: block;
+  height: 40px;
+  background-repeat: no-repeat;
+  background-size: 100% 80px;
+}
+
+div#cabecera ul#botonera li a {
+  background-position: left top;
+  text-align: center;
+}
+
+div#cabecera ul#botonera li a span {
+  position: relative;
+  top: 30%;
+}
+
+/*
+div#cabecera ul#botonera li strong,
+div#cabecera ul#botonera li a{
+  background-image: url("/img/button.png");
+  width: 70px;
+  color: #0ac80a;
+}
+*/
+div#cabecera ul#botonera li strong,
+div#cabecera ul#botonera li a{
+    background-image: linear-gradient(bottom, rgb(243,243,243) 0%, rgb(243,243,243) 42%, rgb(255,255,255) 94%);
+  background-image: -o-linear-gradient(bottom, rgb(243,243,243) 0%, rgb(243,243,243) 42%, rgb(255,255,255) 94%);
+  background-image: -moz-linear-gradient(bottom, rgb(243,243,243) 0%, rgb(243,243,243) 42%, rgb(255,255,255) 94%);
+  background-image: -webkit-linear-gradient(bottom, rgb(243,243,243) 0%, rgb(243,243,243) 42%, rgb(255,255,255) 94%);
+  background-image: -ms-linear-gradient(bottom, rgb(243,243,243) 0%, rgb(243,243,243) 42%, rgb(255,255,255) 94%);
+
+  background-image: -webkit-gradient(
+    linear,
+    left bottom,
+    left top,
+    color-stop(0, rgb(243,243,243)),
+    color-stop(0.42, rgb(243,243,243)),
+    color-stop(0.94, rgb(255,255,255))
+  );
+  -moz-border-radius: 15px;
+  -webkit-border-radius: 15px;
+  border: 1px solid #d6dbe2;
+  padding: 5px;
+}
+
+div#cabecera ul#botonera li strong,
+div#cabecera ul#botonera li a:hover {
+  background-image: linear-gradient(bottom, rgb(255,255,255) 0%, rgb(120,240,120) 42%, rgb(10,200,10) 94%);
+  background-image: -o-linear-gradient(bottom, rgb(255,255,255) 0%, rgb(120,240,120) 42%, rgb(10,200,10) 94%);
+  background-image: -moz-linear-gradient(bottom, rgb(255,255,255) 0%, rgb(120,240,120) 42%, rgb(10,200,10) 94%);
+  background-image: -webkit-linear-gradient(bottom, rgb(255,255,255) 0%, rgb(120,240,120) 42%, rgb(10,200,10) 94%);
+  background-image: -ms-linear-gradient(bottom, rgb(255,255,255) 0%, rgb(120,240,120) 42%, rgb(10,200,10) 94%);
+
+  background-image: -webkit-gradient(
+    linear,
+    left bottom,
+    left top,
+    color-stop(0, rgb(255,255,255)),
+    color-stop(0.42, rgb(120,240,120)),
+    color-stop(0.94, rgb(10,200,10))
+  );
+  color: white;
+}
+
+div#cabecera ul#botonera li strong,
+div#cabecera ul#botonera li a.active {
+  background-image: linear-gradient(bottom, rgb(255,255,255) 0%, rgb(120,240,120) 42%, rgb(10,200,10) 94%);
+  background-image: -o-linear-gradient(bottom, rgb(255,255,255) 0%, rgb(120,240,120) 42%, rgb(10,200,10) 94%);
+  background-image: -moz-linear-gradient(bottom, rgb(255,255,255) 0%, rgb(120,240,120) 42%, rgb(10,200,10) 94%);
+  background-image: -webkit-linear-gradient(bottom, rgb(255,255,255) 0%, rgb(120,240,120) 42%, rgb(10,200,10) 94%);
+  background-image: -ms-linear-gradient(bottom, rgb(255,255,255) 0%, rgb(120,240,120) 42%, rgb(10,200,10) 94%);
+
+  background-image: -webkit-gradient(
+    linear,
+    left bottom,
+    left top,
+    color-stop(0, rgb(255,255,255)),
+    color-stop(0.42, rgb(120,240,120)),
+    color-stop(0.94, rgb(10,200,10))
+  );
+  color: white;
+}
+
+div#cabecera ul#botonera li#juego1 a,
+div#cabecera ul#botonera li#juego1 strong {
+  width: 120px;
+}
+
+#carousel {
+  position: absolute;
+top: 150px;
+left: 50%;
+margin-left: -400px;
+width: 800px;
+}
+
+#demo, #demo li {
+  margin:0;
+  padding:0;
+  width:800px;
+  height:495px;
+  list-style:none;
+}
+
+#demo {
+  overflow: hidden;
+}
+
+#demo li {
+  float:left;
+}
+
+#leftarrow {
+  background-image: url("img/arrow.png");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  position: absolute;
+  left: -25px;
+  z-index: 10;
+  top: 50%;
+  margin-top: -20px;
+  width: 20px;
+  height: 40px;
+}
+
+#rightarrow {
+  background-image: url("img/arrow-right.png");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  position: absolute;
+  left: 805px;
+  z-index: 10;
+  top: 50%;
+  margin-top: -20px;
+  width: 20px;
+  height: 40px;
+}
+
+.car-image {
+  width: 800px;
+}
+
+#draw {
+  width: 640px;
+  height: 480px;
+  position:absolute;
+  z-index:1;
+  left: 50%;
+  margin-left: -320px;
+  top: 150px;
+}
+
+#localView {
+  width: 640px;
+  height: 480px;
+  position:absolute;
+  z-index:1;
+  left: 50%;
+  margin-left: -320px;
+  top: 150px;
+  -webkit-transform: scale(-1, 1);
+}
