@@ -316,6 +316,7 @@ function startButton(event) {
     }
     final_transcript = '';
     recognition.start();
+    recognition.lang = 'en';
     ignore_onend = false;
     start_img.src = 'img/mic-slash.gif';
     showButtons('none');
