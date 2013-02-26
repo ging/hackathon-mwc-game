@@ -12,7 +12,8 @@
 <style>
 #div_garbage {
     position: absolute;
-    left: 200px;
+    left: 50%;
+    margin-left: -320px;
     height: 300px;
     width: 300px;
     top: 150px;
@@ -26,16 +27,45 @@
 }
 #garbageImg {
     height: 200px;
-    margin-left: auto;   
+    margin-left: auto;
     margin-right: auto;
     padding-top: 45px;
 
 }
-#info {
+#inf {
     font-size: 20px;
+    width: 100%;
+    height: 50px;
+    padding-top: 30px;
+    padding-bottom: 30px;
+}
+#result {
+    font-size: 20px;
+    width: 100%;
+    height: 100px;
+    color: white;
+    -moz-border-radius: 15px;
+  -webkit-border-radius: 15px;
+  border: 2px solid #ffffff;
 }
 #div_start {
-    float: right;
+    position: absolute;
+    top: 150px;
+    left: 50%;
+    margin-left: 10px;
+    width: 300px;
+    height: 300px;
+    -moz-border-radius: 15px;
+    -webkit-border-radius: 15px;
+    border: 2px solid #d6dbe2;
+    vertical-align: middle;
+    padding: 10px;
+    background-color: white;
+    text-align: center;
+}
+#start_img {
+    width: 50px;
+    height: 50px;
 }
 #headline {
     text-decoration: none
@@ -52,6 +82,8 @@
     border: 0;
     background-color:transparent;
     padding: 0;
+    width: 150px;
+    height: 50px;
 }
 .interim {
     color: gray;
@@ -87,20 +119,22 @@ a.c1 {font-weight: normal;}
 </style>
 </head>
 <body class="" id="grid">
-    <div id="cabecera">
-            <div>
-                <img id="title" src="/img/title.png" alt="Lynckia"></img>
-            </div>
-  </div>
+<div id="cabecera">
+        <div>
+            <a href="/"><img id="title" src="/img/title.png" alt="Lynckia"></img></a>
+        </div>
+</div>
 <div class="compact marquee">
-    <div id="info" style="visibility: hidden;">
-    </div>
     <div id="div_start">
-      <button id="start_button" onclick="startButton(event)" style="display: inline-block;">
-        <img alt="Start" id="start_img" src="img/mic.gif"></img>
-    </button>
-</div>
-</div>
+        <div id="inf">
+            Click  on the mic icon and say the color of the container.
+        </div>
+        <a id="start_button" onclick="startButton(event)" style="display: inline-block;" href="#">
+            <img alt="Start" id="start_img" src="img/mic.gif"></img>
+        </a>
+        <div id="result"></div>
+
+    </div>
 </div>
 
 <div id="div_garbage">
@@ -165,7 +199,6 @@ if (!('webkitSpeechRecognition' in window)) {
     recognition.onstart = function() {
         console.log('starting');
         recognizing = true;
-        showInfo('info_speak_now');
         start_img.src = 'img/mic-animate.gif';
     };
 
@@ -173,20 +206,10 @@ if (!('webkitSpeechRecognition' in window)) {
         console.log('error');
         if (event.error == 'no-speech') {
             start_img.src = 'img/mic.gif';
-            showInfo('info_no_speech');
             ignore_onend = true;
         }
         if (event.error == 'audio-capture') {
             start_img.src = 'img/mic.gif';
-            showInfo('info_no_microphone');
-            ignore_onend = true;
-        }
-        if (event.error == 'not-allowed') {
-            if (event.timeStamp - start_timestamp < 100) {
-                showInfo('info_blocked');
-            } else {
-                showInfo('info_denied');
-            }
             ignore_onend = true;
         }
     };
@@ -198,15 +221,9 @@ if (!('webkitSpeechRecognition' in window)) {
         }
         start_img.src = 'img/mic.gif';
         if (!final_transcript) {
-            showInfo('info_start');
             return;
         }
-        showInfo('');
 
-        if (create_email) {
-            create_email = false;
-            createEmail();
-        }
     };
 
     recognition.onresult = function(event) {
@@ -222,30 +239,30 @@ if (!('webkitSpeechRecognition' in window)) {
             if (event.results[i].isFinal) {
                 final_transcript += event.results[i][0].transcript;
                 console.log('final_transcript= '+final_transcript);
-                var color;
-                if (final_transcript == 'green' || final_transcript == 'been' || final_transcript == 'dean') {
-                    color = 'green';
-                    $('#voice_output').append('<p>You said ' +color+'</p>');
-                    checkGarbage(color);
+                var color = final_transcript;
+                switch (final_transcript) {
+                    case 'green':
+                    case 'been':
+                    case 'dean':
+                        color = 'green';
+                        break;
+                    case 'blue':
+                    case 'boom':
+                    case 'bloom':
+                        color = 'blue';
+                        break;
+                    case 'yellow':
+                    case 'you':
+                        color = 'yellow';
+                        break;
+                    case 'gray':
+                    case 'grey':
+                    case 'ray':
+                    case 'great':
+                        color = 'gray';
+                        break;
                 }
-                else if (final_transcript == 'blue' || final_transcript == 'boom' || final_transcript == 'boom') {
-                    color = 'blue';
-                    $('#voice_output').append('<p>You said ' +color+'</p>');
-                    checkGarbage(color);
-                }
-                else if (final_transcript == 'yellow' || final_transcript == 'you') {
-                    color = 'yellow';
-                    $('#voice_output').append('<p>You said ' +color+'</p>');
-                    checkGarbage(color);
-                }
-                else if (final_transcript == 'grey' || final_transcript == 'ray' || final_transcript == 'great') {
-                    color = 'grey';
-                    $('#voice_output').append('<p>You said ' +color+'</p>');
-                    checkGarbage(color);
-                }
-                else {
-                    callWrongColor();
-                }
+                checkGarbage(color);
             } else {
                 interim_transcript += event.results[i][0].transcript;
             }
@@ -262,82 +279,23 @@ function callWrongColor() {
 }
 
 function checkGarbage(color) {
-    console.log(color);
+    var ok = 'Good!'
     if (secret.color === color) {
         console.log('correct answer');
+        $('#result').css({"background-color": "green"});
+        trowGarbage();
     } else {
         console.log('wrong');
+        $('#result').css({"background-color": "red"});
+        ok = "Oh, oh! Try again!"
     }
+    $('#result').html('<p>Your answer is \"' + color + '\"</p>'+ok);
     return;
-    switch (color) {
-        case 'blue':
-            {callBlue(); break;}
-        case 'green':
-            {callGreen(); break;}
-        case 'yellow':
-            {callYellow(); break;}
-        case 'grey':
-            {callGrey(); break; }
-        default:
-    }
 }
 var img_source = $('#garbageImg').attr('src');
 
-function callBlue() {
-    console.log('callingBlue');
-    console.log(img_source);
-    if (img_source == img_path+'/periodico.jpg') {
-        console.log('correct answer');
-
-        $('#real_output').append('<p>Bravo - correct answer!</p>');
-    } else {
-        console.log('wrong answer');
-        $('#real_output').append('<p>Bravo - correct answer!</p>');
-    }
-    trowGarbage();
-}
-
-function callGreen() {
-    console.log('callingGreen');
-    console.log(img_source);
-    if (img_source == img_path+'/botella.jpg') {
-        console.log('correct answer');
-        $('#real_output').append('<p>Bravo - correct answer!</p>');
-    }else{
-        console.log('wrong answer');
-        $('#real_output').append('<p>Bravo - correct answer!</p>');
-    }
-    trowGarbage();
-}
-
-function callYellow() {
-    console.log('callingYello');
-    if (img_source == img_path+'/lata.jpg') {
-        console.log('correct answer');
-        $('#real_output').append('<p>Bravo - correct answer!</p>');
-    } else {
-        console.log('wrong answer');
-        $('#real_output').append('<p>Bravo - correct answer!</p>');
-    }
-    trowGarbage();
-}
-
-function callGrey() {
-    console.log('callingGrey');
-    if (img_source == img_path+'/platano.jpg') {
-        console.log('correct answer');
-        $('#real_output').append('<p>Bravo - correct answer!</p>');
-    }else{
-        console.log('wrong answer');
-        $('#real_output').append('<p>Bravo - correct answer!</p>');
-    }
-    trowGarbage();
-}
-
-
 function upgrade() {
     start_button.style.visibility = 'hidden';
-    showInfo('info_upgrade');
 }
 
 var two_line = /\n\n/g;
@@ -351,38 +309,6 @@ function capitalize(s) {
     return s.replace(first_char, function(m) { return m.toUpperCase(); });
 }
 
-function createEmail() {
-    var n = final_transcript.indexOf('\n');
-    if (n < 0 || n >= 80) {
-        n = 40 + final_transcript.substring(40).indexOf(' ');
-    }
-    var subject = encodeURI(final_transcript.substring(0, n));
-    var body = encodeURI(final_transcript.substring(n + 1));
-    window.location.href = 'mailto:?subject=' + subject + '&body=' + body;
-}
-
-function copyButton() {
-    if (recognizing) {
-        recognizing = false;
-        recognition.stop();
-    }
-    copy_button.style.display = 'none';
-    //copy_info.style.display = 'inline-block';
-    showInfo('');
-}
-
-function emailButton() {
-    if (recognizing) {
-        create_email = true;
-        recognizing = false;
-        recognition.stop();
-    } else {
-        createEmail();
-    }
-    email_info.style.display = 'inline-block';
-    showInfo('');
-}
-
 function startButton(event) {
     if (recognizing) {
         recognition.stop();
@@ -392,22 +318,8 @@ function startButton(event) {
     recognition.start();
     ignore_onend = false;
     start_img.src = 'img/mic-slash.gif';
-    showInfo('info_allow');
     showButtons('none');
     start_timestamp = event.timeStamp;
-}
-
-function showInfo(s) {
-    if (s) {
-        for (var child = info.firstChild; child; child = child.nextSibling) {
-            if (child.style) {
-                child.style.display = child.id == s ? 'inline' : 'none';
-            }
-        }
-        info.style.visibility = 'visible';
-    } else {
-        info.style.visibility = 'hidden';
-    }
 }
 
 var current_style;
