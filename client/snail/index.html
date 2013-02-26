@@ -1,6 +1,6 @@
 <html>
 <head>
-<title>Leap JavaScript API</title>
+<title>Draw to Recycle</title>
 
 <link rel="stylesheet" href="/style.css">
 <link rel="stylesheet" href="/font-awesome.css">
@@ -26,6 +26,8 @@ var background = new Image();
 var caracol = new Image();
 var news = new Image();
 var can = new Image();
+var bottle = new Image();
+var badTrashImages = new Array();
 // Support both the WebSocket and MozWebSocket objects
 if ((typeof(WebSocket) == 'undefined') &&
     (typeof(MozWebSocket) != 'undefined')) {
@@ -56,6 +58,11 @@ function init() {
   caracol.src = "caracol.gif";
   news.src = "news.png";
   can.src = "can.png";
+  bottle.src = "botella.png";
+
+  badTrashImages.push(bottle);
+  badTrashImages.push(can);
+
   //Create and open the socket
   ws = new WebSocket("ws://localhost:6437/");
 
@@ -92,7 +99,7 @@ function init() {
     if (line.length===100){
       var a = isCollision(line[0].x,line[0].y);
       if (a!=-1){
-        if(trash[a].type){
+        if(trash[a].type===0){
           score = score + 5;
         }else{
           score = score - 5;
@@ -130,10 +137,10 @@ function init() {
      var ex = Math.floor((Math.random()*(canvasWidth-200)+50));
      var gy = Math.floor ((Math.random()*(canvasHeight-200)+50));
       }while(isCollision(ex,gy)!=-1)
-     var type = false;
-     if (Math.random()>0.4)
+     var type = 0;
+     if (Math.random()>0.6)
      {
-      type = true;
+      type = Math.floor(Math.random()*2)+1;
      }
      var wtrash, htrash;
 
@@ -235,11 +242,13 @@ function init() {
  function paintTrash(){
   for (var i =0; i<trash.length;i++){
     //context.fillRect(trash[i].x,trash[i].y,trash[i].width,trash[i].height);
-    if(trash[i].type){
+    if(trash[i].type===0){
       context.drawImage(news,trash[i].x,trash[i].y);
-    }else{
+    }else if (trash[i].type===1){
       context.drawImage(can,trash[i].x, trash[i].y);
-    }
+      }else{
+      context.drawImage(bottle,trash[i].x, trash[i].y);      
+      }
    }
  }
 
