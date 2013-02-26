@@ -93,7 +93,7 @@ function sendRes (first) {
 	var keys = Object.keys(players);
 
 	//depende del numero de imagenes
-	var res = randomFromInterval (1,4);
+	var res = randomFromInterval (1,8);
 
 	io.sockets.socket(keys[0]).emit('showRes', {x: xo, y: yo, res: res, score: players, seqNum: seqNum, first: first});
     io.sockets.socket(keys[1]).emit('showRes', {x: xo, y: yo, res: res, score: players, seqNum: seqNum, first: first});
