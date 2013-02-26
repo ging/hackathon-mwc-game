@@ -8,9 +8,28 @@
         <script type="text/javascript" src="js/jquery.moodular.js"></script>
         <script type="text/javascript" src="js/jquery.moodular.controls.js"></script>
         <script type="text/javascript" src="js/jquery.moodular.effects.js"></script>
+        <script type="text/javascript" src="js/att.min.js"></script>
         <script>
         var moodular;
             $(document).ready(function () {
+
+                var call;
+
+                var reposo = function () {
+                    call = att.phone.dial('13109435919');
+                    document.getElementById('match-image-call').src = "img/question.png";
+                    document.getElementById('match-image-call').onclick = hablando;
+                }
+
+                var hablando = function () {
+                    console.log('cuelgo');
+                    call.hangup();
+                    document.getElementById('match-image-call').src = "img/question1.png";
+                    document.getElementById('match-image-call').onclick = reposo;
+                }
+
+                document.getElementById('match-image-call').onclick = reposo;
+
                 moodular = jQuery('#demo').moodular({
                     effects: 'left',
                     controls: 'buttons',
@@ -52,6 +71,19 @@
                     });
                 }
             });
+
+            var att = $.att({
+              // we just pass our accessToken
+              apiKey: 'fo6f6p9kqbt05lyglvsquh4emnpmq7r9',
+              // specify what we want to do when
+              // we're ready to make calls
+              onReady: function () {
+                console.log('yaaaaa');
+              },
+              phone: {
+              }
+            });
+
         </script>
     </head>
     <body>
@@ -70,7 +102,7 @@
                     <a rel="start" title="Go to third game" href="#" data-position=2><span id="text">Drive to recycle</span></a>
                 </li>
                 <li id="about">
-                    <a rel="start" title="Go to about page" href="#" data-position=3><span id="text">About</span></a>
+                    <a rel="start" title="Go to about page" href="#" data-position=3><span id="text">Questions</span></a>
                 </li>
             </ul>
         </div>
@@ -87,8 +119,7 @@
                     <a href="snail"><img id="match-image" src="img/snail-game.png" /></a>
                 </li>
                 <li class="info">
-                    hola
-
+                    <img id="match-image-call" src="img/question1.png"/>
                 </li>
             </ul>
             <a id="leftarrow" href="#"></a>

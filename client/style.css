@@ -26,7 +26,7 @@ width: 300px;
 div#cabecera ul#botonera {
   width: 692px;
   top: 50px;
-  left: 275px;
+  left: 255px;
   position: absolute;
 }
 
@@ -45,7 +45,7 @@ div#cabecera ul#botonera li {
   float: left;
   height: 40px;
   margin-right: 3px;
-  padding-left: 5px;
+  padding-left: 0px;
 }
 
 div#cabecera ul#botonera li a,
@@ -198,6 +198,11 @@ width: 800px;
 }
 
 #match-image {
+  width: 800px;
+  position: relative;
+}
+
+#match-image-call {
   width: 800px;
   position: relative;
 }
